@@ -53,13 +53,13 @@ class sephora_parser
         {
             if($error->level == LIBXML_ERR_FATAL) // only interested in fatal errors
             {
-                
+
                 die("ERROR: HTML parse error (code {$error->code}): {$error->message} in file {$error->file}, on line {$error->line}, column {$error->column}");
             }
         }
         libxml_clear_errors();
         libxml_use_internal_errors($libxml_errors_setting);
-        
+
         return $domdocument;
     }
 
@@ -91,7 +91,7 @@ class sephora_parser
         {
             die('ProductGrid element not found');
         }
-        
+
         $products = $xpath->query(".//div[@class='css-115paux']", $product_grid);
         foreach($products as $product)
         {
