@@ -1,11 +1,22 @@
 <?php
+	// define the path and name of cached file
+	$cachefile = dirname(__FILE__) . '/cache/'.date('M-d-Y').'.php';
+	// define how long we want to keep the file in seconds. I set mine to 5 hours.
+	$cachetime = 18000;
+	// Check if the cached file is still fresh. If it is, serve it up and exit.
+	if (file_exists($cachefile) && time() - $cachetime < filemtime($cachefile)) {
+   	include($cachefile);
+    	exit;
+	}
+	// if there is either no file OR the file to too old, render the page and capture the HTML.
+    ob_start();
 
 //get records into database
 // looping through the pages to get the product title, product brands, product rating, and number of ratings
 
 $products = [];
 
-for($i = 1; $i < 2; $i++){
+for($i = 1; $i < 5; $i++){
     $html = file_get_contents('https://www.influenster.com/reviews/face-serums?page='.$i); //get the html returned from the following url\
     $influenster_serums_doc_page = new DOMDocument();
     libxml_use_internal_errors(TRUE); //disable libxml errors
@@ -28,15 +39,18 @@ for($i = 1; $i < 2; $i++){
             $titles = $influenster_serums_xpath->query('./div[@class="category-product-title"]', $detail);
             $brands = $influenster_serums_xpath->query('./div[@class="category-product-brand"]', $detail);
             $ratings = $influenster_serums_xpath->query('.//div[@class="category-product-rating"]', $detail);
+            $prices = $influenster_serums_xpath->query('.//div[@class="category-product-varieties"]', $detail);
+            $scraped_at_date = date("Y/m/d");
+
 
             $products[] = [
-                'title' => trim($titles[0]->nodeValue),
-                'brand' => trim($brands[0]->nodeValue),
-                'rating' => trim($ratings[0]->nodeValue)
+                'product_title' => trim($titles[0]->nodeValue),
+                'product_brand_name' => trim($brands[0]->nodeValue),
+                'rating' => trim($ratings[0]->nodeValue),
+                'price' => trim($prices[0]->nodeValue),
+                'scraped_at_date' =>($scraped_at_date)
             ];
         }
-
-
     }
 }
 
@@ -44,4 +58,11 @@ for($i = 1; $i < 2; $i++){
 echo '<pre>';
 print_r($products);
 echo '</pre>';
-die();
+
+
+// We're done! Save the cached content to a file
+$fp = fopen($cachefile, 'w');
+fwrite($fp, ob_get_contents());
+fclose($fp);
+// finally send browser output
+ob_end_flush();
