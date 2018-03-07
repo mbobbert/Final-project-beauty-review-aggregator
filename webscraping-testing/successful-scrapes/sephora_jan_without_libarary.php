@@ -46,4 +46,4 @@ foreach($data['products'] as $product) {
     echo '<hr>';
 }
 
-
+print_r($data);
