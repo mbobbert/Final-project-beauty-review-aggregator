@@ -17,7 +17,7 @@ $resource = $dbh->prepare($query);
 
 //3 execute
 $result = $resource->execute();
-
+print_r($resource->errorInfo());
 //$row = $result->fetchAll();
 //var_dump($row);
 
