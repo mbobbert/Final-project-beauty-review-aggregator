@@ -3,7 +3,7 @@
 
 
 /**
- * The sephora URL was taken from accessing https://www.sephora.com/shop/face-serum?pageSize=300&currentPage=2:
+ * The sephora URL was taken from accessing https://www.sephora.com/shop/face-serum:
  * Then going to dev tools > network tab > XHR > refresh the page > check Name column for files loading > find this file: https://www.sephora.com/api/catalog/categories/cat60103/products?currentPage=1&pageSize=60&content=true&includeRegionsMap=true and open in new tab. Then adjust 'pageSize=' to 405, and all the serum category's products are loaded
  */
 
@@ -31,9 +31,8 @@ function convert_to_csv($input_array, $output_file_name, $delimiter)
     fpassthru($f);
 }
 
-$product_target_urls_sephora = [];
-$html = file_get_contents('https://www.sephora.com/api/catalog/categories/cat60103/products?currentPage=2&pageSize=300&content=true&includeRegionsMap=true');
-
+$product_image_urls_sephora = [];
+$html = file_get_contents('https://www.sephora.com/api/catalog/categories/cat60103/products?currentPage=1&pageSize=300&content=true&includeRegionsMap=true');
 //var_dump($html);
 
 /**
@@ -44,15 +43,17 @@ $data = json_decode($html, true);
 
 foreach($data['products'] as $product) {
 
-    $product_target_url = $product['targetUrl'];
+    $product_image_url = $product['image450'];
 
-    $product_target_urls_sephora[] = [
-        $product_target_url
+    $product_image_urls_sephora[] = [
+        $product_image_url
     ];
 
 
 
 }
 
-convert_to_csv($product_target_urls_sephora, 'product_target_urls_sephora_301_405.csv', ',');
+convert_to_csv($product_image_urls_sephora, 'product_image_urls_sephora_0_300.csv', ',');
 //print_r($product_target_urls_sephora);
+
+
