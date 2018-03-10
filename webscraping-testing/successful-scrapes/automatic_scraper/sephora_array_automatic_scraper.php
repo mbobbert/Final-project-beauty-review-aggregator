@@ -20,7 +20,7 @@ $result = $resource->execute();
 print_r($resource->errorInfo());
 //$row = $result->fetchAll();
 //var_dump($row);
-
+//var_dump($row = $resource->fetch());
 /**
  * Step 3 Create a while loop that will go to target_urls column in test_bra_1 database as long as parsed_at column is NULL
  *
@@ -28,7 +28,7 @@ print_r($resource->errorInfo());
 
 // QUESTION to Honza: how to write the following line:
 //4 fetch
-while (false !== ($row = $result->fetchRow()))
+while (false !== ($row = $resource->fetch()))
 
 /**
  * Step 4 Parse data
@@ -36,7 +36,7 @@ while (false !== ($row = $result->fetchRow()))
 {
     $product_desc_and_nr_of_ratings = [];
 
-    $html = file_get_contents('https://www.sephora.com/product/buffet-P427420'); //get the html returned from the following url\
+    $html = file_get_contents($row['target_url']); //get the html returned from the following url\
 
     $sephora_serums_indiv_doc_page = new DOMDocument();
 
